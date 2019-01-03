@@ -54,15 +54,15 @@ void playWAVData(File root) {
       //i2s_config.sample_rate = (int)wavProps.SampleRate;
       //i2s_config.bits_per_sample = (i2s_bits_per_sample_t)wavProps.BitsPerSample;
       i2s_driver_install((i2s_port_t)i2s_num, &i2s_config, 0, NULL);
-      i2s_set_dac_mode(I2S_DAC_CHANNEL_RIGHT_EN);
+      i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
       //set sample rates of i2s to sample rate of wav file
       //i2s_set_sample_rates((i2s_port_t)i2s_num, wavProps.SampleRate);
-      i2s_set_clk((i2s_port_t)i2s_num, wavProps.SampleRate, I2S_BITS_PER_SAMPLE_16BIT, I2S_CHANNEL_STEREO);
+      //i2s_set_clk((i2s_port_t)i2s_num, wavProps.SampleRate, I2S_BITS_PER_SAMPLE_16BIT, I2S_CHANNEL_STEREO);
       Serial.println("WAV Prepared!");
-      uint8_t sample;
-      for (uint32_t i = 0; i < wavProps.Subchunk2Size; i++) {
-        root.read((uint8_t *)&sample, sizeof(uint8_t));
-        i2s_write_bytes((i2s_port_t)i2s_num, &sample, sizeof(uint8_t), 100);
+      uint16_t sample;
+      for (uint32_t i = 0; i < wavProps.Subchunk2Size/2; i++) {
+        root.read((uint8_t *)&sample, sizeof(sample));
+        i2s_write_bytes((i2s_port_t)i2s_num, &sample, sizeof(sample), 100);
         i2s_write_bytes((i2s_port_t)i2s_num, &sample, sizeof(uint8_t), 100);
       }
       root.close();
